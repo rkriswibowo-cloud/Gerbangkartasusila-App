@@ -1,0 +1,29 @@
+# Backend (Laravel)
+backend/vendor/
+backend/node_modules/
+backend/public/storage
+backend/public/build
+backend/public/hot
+backend/storage/*.key
+backend/.env
+backend/.env.backup
+backend/.env.production
+backend/.phpunit.cache
+backend/auth.json
+
+# Mobile (Flutter)
+mobile/.dart_tool/
+mobile/.flutter-plugins-dependencies
+mobile/.pub-cache/
+mobile/.pub/
+mobile/build/
+mobile/coverage/
+mobile/*.iml
+mobile/.idea/
+
+# IDE & OS Files
+.vscode/
+.idea/
+*.log
+.DS_Store
+Thumbs.db

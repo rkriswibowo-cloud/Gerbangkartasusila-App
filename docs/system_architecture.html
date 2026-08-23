@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>System Architecture - E-Tourism (Black & White)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background-color: #FFFFFF;
+    color: #111827;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    width: 1500px;
+    height: 1000px;
+    padding: 32px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  /* Header */
+  .header {
+    border-bottom: 2px solid #111827;
+    padding-bottom: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .header h1 {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: #000000;
+    text-transform: uppercase;
+  }
+
+  .header p {
+    font-size: 13px;
+    color: #4B5563;
+    font-weight: 500;
+    margin-top: 3px;
+  }
+
+  .header-meta {
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    color: #374151;
+    background: #F3F4F6;
+    padding: 6px 12px;
+    border: 1px solid #D1D5DB;
+    border-radius: 6px;
+  }
+
+  /* Main Diagram Architecture */
+  .diagram-body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin: 18px 0;
+    flex: 1;
+    justify-content: space-between;
+  }
+
+  /* Tier Row */
+  .tier-row {
+    display: flex;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .tier-label-box {
+    width: 150px;
+    background: #111827;
+    color: #FFFFFF;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 12px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .tier-label-box .num {
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    background: #374151;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+  }
+
+  .tier-label-box .title {
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1.3;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  .tier-content {
+    display: flex;
+    gap: 14px;
+    flex: 1;
+  }
+
+  /* Box Block */
+  .arch-box {
+    flex: 1;
+    background: #FFFFFF;
+    border: 1.5px solid #1F2937;
+    border-radius: 8px;
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 2px 2px 0px #1F2937;
+  }
+
+  .arch-box.gray-bg {
+    background: #F9FAFB;
+  }
+
+  .box-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #E5E7EB;
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+  }
+
+  .box-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: #111827;
+  }
+
+  .box-tag {
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    background: #E5E7EB;
+    color: #111827;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid #D1D5DB;
+  }
+
+  /* Item list */
+  .item-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    font-size: 11px;
+    color: #374151;
+  }
+
+  .item-grid.single {
+    grid-template-columns: 1fr;
+  }
+
+  .item-badge {
+    background: #F3F4F6;
+    border: 1px solid #E5E7EB;
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .item-badge::before {
+    content: "•";
+    color: #111827;
+    font-weight: bold;
+  }
+
+  /* Directional Separator */
+  .flow-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    color: #4B5563;
+    padding: 2px 0;
+  }
+
+  .flow-arrow span.line {
+    height: 1px;
+    background: #D1D5DB;
+    flex: 1;
+  }
+
+  /* Bottom External Services */
+  .bottom-bar {
+    border: 1.5px solid #1F2937;
+    border-radius: 8px;
+    background: #F9FAFB;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 2px 2px 0px #1F2937;
+  }
+
+  .bottom-label {
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #111827;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ext-grid {
+    display: flex;
+    gap: 10px;
+  }
+
+  .ext-pill {
+    background: #FFFFFF;
+    border: 1px solid #9CA3AF;
+    padding: 5px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #1F2937;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* Footer */
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #6B7280;
+    font-weight: 600;
+    border-top: 1px solid #E5E7EB;
+    padding-top: 10px;
+  }
+</style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div>
+      <h1>System Architecture: E-Tourism Platform</h1>
+      <p>Kediri & Gerbangkartasusila Smart Tourism System</p>
+    </div>
+    <div class="header-meta">
+      STACK: FLUTTER • LARAVEL 10 • FILAMENT 3 • MYSQL
+    </div>
+  </header>
+
+  <!-- Main Architecture Container -->
+  <div class="diagram-body">
+
+    <!-- TIER 1: CLIENT TIER -->
+    <div class="tier-row">
+      <div class="tier-label-box">
+        <span class="num">TIER 1</span>
+        <span class="title">Client Layer</span>
+      </div>
+      <div class="tier-content">
+        <!-- Mobile App -->
+        <div class="arch-box">
+          <div class="box-head">
+            <span class="box-title">Mobile Client (Tourist)</span>
+            <span class="box-tag">Flutter / Dart</span>
+          </div>
+          <div class="item-grid">
+            <div class="item-badge">Destinasi & Wisata</div>
+            <div class="item-badge">Jadwal Event & Budaya</div>
+            <div class="item-badge">Kuliner & Hotel</div>
+            <div class="item-badge">Booking Tiket & QR Code</div>
+            <div class="item-badge">Peta Interaktif (OSM)</div>
+            <div class="item-badge">Ulasan & Favorit User</div>
+          </div>
+        </div>
+
+        <!-- Admin Web -->
+        <div class="arch-box">
+          <div class="box-head">
+            <span class="box-title">Admin CMS (Staff & Admin)</span>
+            <span class="box-tag">Laravel Filament 3</span>
+          </div>
+          <div class="item-grid">
+            <div class="item-badge">Dashboard & Analitik</div>
+            <div class="item-badge">Manajemen Konten Wisata</div>
+            <div class="item-badge">Kelola Agenda & Artikel</div>
+            <div class="item-badge">Monitoring Tiket & Order</div>
+            <div class="item-badge">Manajemen Pengguna & Role</div>
+            <div class="item-badge">Moderasi Ulasan Pengunjung</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONNECTOR 1 -->
+    <div class="flow-arrow">
+      <span class="line"></span>
+      <span>▼ HTTPS / REST API (JSON) & Bearer Token Authentication ▼</span>
+      <span class="line"></span>
+    </div>
+
+    <!-- TIER 2: GATEWAY & SECURITY -->
+    <div class="tier-row">
+      <div class="tier-label-box">
+        <span class="num">TIER 2</span>
+        <span class="title">Gateway & Auth</span>
+      </div>
+      <div class="tier-content">
+        <div class="arch-box gray-bg">
+          <div class="box-head">
+            <span class="box-title">API Gateway & Web Server</span>
+            <span class="box-tag">Nginx / Apache</span>
+          </div>
+          <div class="item-grid">
+            <div class="item-badge">SSL/TLS HTTPS Encryption</div>
+            <div class="item-badge">CORS & Security Headers</div>
+            <div class="item-badge">REST Endpoints (/api/v1)</div>
+            <div class="item-badge">Static Media Handler (/media)</div>
+          </div>
+        </div>
+
+        <div class="arch-box gray-bg">
+          <div class="box-head">
+            <span class="box-title">Security & Middleware Guard</span>
+            <span class="box-tag">Laravel Sanctum</span>
+          </div>
+          <div class="item-grid">
+            <div class="item-badge">Bearer Token Auth State</div>
+            <div class="item-badge">Rate Limiter (60 req/min)</div>
+            <div class="item-badge">Input Validation & Sanitasi</div>
+            <div class="item-badge">Role & Permission Policy</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONNECTOR 2 -->
+    <div class="flow-arrow">
+      <span class="line"></span>
+      <span>▼ Internal Request Dispatching & Controller Routing ▼</span>
+      <span class="line"></span>
+    </div>
+
+    <!-- TIER 3: BACKEND APPLICATION -->
+    <div class="tier-row">
+      <div class="tier-label-box">
+        <span class="num">TIER 3</span>
+        <span class="title">Backend Tier</span>
+      </div>
+      <div class="tier-content">
+        <div class="arch-box">
+          <div class="box-head">
+            <span class="box-title">RESTful API Controllers</span>
+            <span class="box-tag">Laravel 10</span>
+          </div>
+          <div class="item-grid">
+            <div class="item-badge">AuthController</div>
+            <div class="item-badge">DestinationController</div>
+            <div class="item-badge">EventController</div>
+            <div class="item-badge">TicketController</div>
+            <div class="item-badge">CulinaryController</div>
+            <div class="item-badge">HotelController</div>
+            <div class="item-badge">ArticleController</div>
+            <div class="item-badge">ReviewController</div>
+          </div>
+        </div>
+
+        <div class="arch-box">
+          <div class="box-head">
+            <span class="box-title">Business Logic & Domain Services</span>
+            <span class="box-tag">Core Engine</span>
+          </div>
+          <div class="item-grid single">
+            <div class="item-badge"><strong>E-Ticket Engine:</strong> Auto Code Generator (TKT-XXXX) & Validasi QR</div>
+            <div class="item-badge"><strong>Geo-Distance Service:</strong> Perhitungan Jarak GPS (Haversine Formula)</div>
+            <div class="item-badge"><strong>Media Streamer:</strong> Pengiriman File Gambar & Dynamic MIME Header</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONNECTOR 3 -->
+    <div class="flow-arrow">
+      <span class="line"></span>
+      <span>▼ Eloquent ORM Queries & Storage I/O ▼</span>
+      <span class="line"></span>
+    </div>
+
+    <!-- TIER 4: DATABASE & STORAGE -->
+    <div class="tier-row">
+      <div class="tier-label-box">
+        <span class="num">TIER 4</span>
+        <span class="title">Persistence</span>
+      </div>
+      <div class="tier-content">
+        <div class="arch-box gray-bg">
+          <div class="box-head">
+            <span class="box-title">Relational Database (12 Tables)</span>
+            <span class="box-tag">MySQL 8 (InnoDB)</span>
+          </div>
+          <div class="item-grid">
+            <div class="item-badge">users & personal_tokens</div>
+            <div class="item-badge">destinations & categories</div>
+            <div class="item-badge">events & schedules</div>
+            <div class="item-badge">tickets & orders</div>
+            <div class="item-badge">culinary_places & hotels</div>
+            <div class="item-badge">articles, reviews, favorites</div>
+          </div>
+        </div>
+
+        <div class="arch-box gray-bg">
+          <div class="box-head">
+            <span class="box-title">File & Asset Storage</span>
+            <span class="box-tag">Local / Public Disk</span>
+          </div>
+          <div class="item-grid single">
+            <div class="item-badge">Foto Destinasi, Event Banner, Kuliner, & Hotel (<code>storage/app/public</code>)</div>
+            <div class="item-badge">Avatar User, Bukti Booking, & Media Galeri Wisata</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- EXTERNAL INTEGRATIONS BAR -->
+  <div class="bottom-bar">
+    <div class="bottom-label">
+      <span>External Integrations:</span>
+    </div>
+    <div class="ext-grid">
+      <div class="ext-pill">🗺️ OpenStreetMap (OSM)</div>
+      <div class="ext-pill">🔔 Firebase FCM</div>
+      <div class="ext-pill">💳 Midtrans / QRIS Payment</div>
+      <div class="ext-pill">📱 QR Code Scanner Validasi</div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div>Dokumentasi Arsitektur Sistem • E-Tourism Kediri & Gerbangkartasusila</div>
+    <div>Format: Hitam Putih (Monokrom Ringkas) • Resolusi: 1500 × 1000 PNG</div>
+  </footer>
+
+</body>
+</html>
