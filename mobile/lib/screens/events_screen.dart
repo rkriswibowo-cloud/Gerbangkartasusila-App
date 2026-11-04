@@ -24,6 +24,7 @@ class _EventsScreenState extends State<EventsScreen> {
 
   Future<void> _fetchEvents() async {
     final data = await _apiService.getEvents();
+      if (!mounted) return;
     setState(() {
       _events = data;
       _isLoading = false;
@@ -77,7 +78,7 @@ class _EventsScreenState extends State<EventsScreen> {
                         border: Border.all(color: AppColors.border),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.primary.withOpacity(0.08),
+                            color: AppColors.primary.withValues(alpha: 0.08),
                             blurRadius: 16,
                             offset: const Offset(0, 4),
                           ),

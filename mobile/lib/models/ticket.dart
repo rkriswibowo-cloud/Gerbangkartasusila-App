@@ -17,6 +17,12 @@ class Ticket {
   final String createdAt;
   final Destination? destination;
 
+  String get statusLabel => switch (status) {
+    'paid' => 'LUNAS',
+    'cancelled' => 'DIBATALKAN',
+    _ => 'MENUNGGU PEMBAYARAN',
+  };
+
   Ticket({
     required this.id,
     required this.ticketCode,
@@ -52,8 +58,8 @@ class Ticket {
       totalPrice: json['total_price'] != null
           ? double.parse(json['total_price'].toString())
           : 0.0,
-      paymentMethod: json['payment_method'] ?? 'QRIS',
-      status: json['status'] ?? 'paid',
+      paymentMethod: json['payment_method'] ?? 'Bayar di lokasi',
+      status: json['status'] ?? 'pending',
       createdAt: json['created_at'] ?? '',
       destination: json['destination'] != null
           ? Destination.fromJson(json['destination'])

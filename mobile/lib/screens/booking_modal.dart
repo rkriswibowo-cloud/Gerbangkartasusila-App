@@ -29,7 +29,7 @@ class _BookingModalState extends State<BookingModal> {
 
   late DateTime _selectedDate;
   int _quantity = 1;
-  String _selectedPayment = 'QRIS';
+  String _selectedPayment = 'Bayar di lokasi';
   bool _isLoading = false;
 
   late TextEditingController _nameController;
@@ -37,19 +37,16 @@ class _BookingModalState extends State<BookingModal> {
   late TextEditingController _phoneController;
 
   final List<Map<String, dynamic>> _paymentMethods = [
-    {'name': 'QRIS Instant', 'icon': Icons.qr_code_2_rounded, 'color': AppColors.primary},
-    {'name': 'Transfer BCA', 'icon': Icons.account_balance_rounded, 'color': Color(0xFF2980B9)},
-    {'name': 'GoPay / OVO', 'icon': Icons.account_balance_wallet_rounded, 'color': Color(0xFFD35400)},
-    {'name': 'ShopeePay', 'icon': Icons.shopping_bag_rounded, 'color': Color(0xFFC0392B)},
+    {'name': 'Bayar di lokasi', 'icon': Icons.payments_outlined, 'color': AppColors.primary},
   ];
 
   @override
   void initState() {
     super.initState();
     _selectedDate = DateTime.now().add(const Duration(days: 1));
-    _nameController = TextEditingController(text: 'Wisatawan');
-    _emailController = TextEditingController(text: 'visitor@gerbangkartasusila.id');
-    _phoneController = TextEditingController(text: '081234567890');
+    _nameController = TextEditingController(text: ApiService.currentUser?['name'] ?? '');
+    _emailController = TextEditingController(text: ApiService.currentUser?['email'] ?? '');
+    _phoneController = TextEditingController(text: ApiService.currentUser?['phone'] ?? '');
   }
 
   @override
@@ -82,7 +79,7 @@ class _BookingModalState extends State<BookingModal> {
               surface: AppColors.background,
               onSurface: AppColors.textDark,
             ),
-            dialogBackgroundColor: AppColors.background,
+            dialogTheme: const DialogThemeData(backgroundColor: AppColors.background),
           ),
           child: child!,
         );
@@ -116,6 +113,7 @@ class _BookingModalState extends State<BookingModal> {
     };
 
     final result = await _apiService.bookTicket(payload);
+    if (!mounted) return;
 
     setState(() {
       _isLoading = false;
@@ -175,7 +173,7 @@ class _BookingModalState extends State<BookingModal> {
                     width: 44,
                     height: 5,
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.3),
+                      color: AppColors.primary.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
@@ -188,7 +186,7 @@ class _BookingModalState extends State<BookingModal> {
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.12),
+                        color: AppColors.primary.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Icon(Icons.confirmation_num_rounded, color: AppColors.primary, size: 24),
@@ -271,7 +269,7 @@ class _BookingModalState extends State<BookingModal> {
                             onPressed: _quantity > 1 ? () => setState(() => _quantity--) : null,
                             icon: const Icon(Icons.remove_rounded),
                             color: AppColors.textDark,
-                            disabledColor: AppColors.textMuted.withOpacity(0.4),
+                            disabledColor: AppColors.textMuted.withValues(alpha: 0.4),
                             iconSize: 20,
                           ),
                           Padding(
@@ -391,7 +389,7 @@ class _BookingModalState extends State<BookingModal> {
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
-                              color: AppColors.primary.withOpacity(0.35),
+                              color: AppColors.primary.withValues(alpha: 0.35),
                               blurRadius: 16,
                               offset: const Offset(0, 4),
                             ),
@@ -412,7 +410,7 @@ class _BookingModalState extends State<BookingModal> {
                                   child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                                 )
                               : const Text(
-                                  'Konfirmasi & Bayar',
+                                  'Konfirmasi Pemesanan',
                                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
                                 ),
                         ),

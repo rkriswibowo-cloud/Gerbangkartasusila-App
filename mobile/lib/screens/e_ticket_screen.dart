@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../models/ticket.dart';
 import '../services/api_service.dart';
 import '../theme/app_colors.dart';
@@ -35,7 +36,7 @@ class ETicketScreen extends StatelessWidget {
                 border: Border.all(color: AppColors.border, width: 1.5),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primary.withOpacity(0.12),
+                    color: AppColors.primary.withValues(alpha: 0.12),
                     blurRadius: 20,
                     offset: const Offset(0, 8),
                   ),
@@ -66,7 +67,7 @@ class ETicketScreen extends StatelessWidget {
                         decoration: BoxDecoration(
                           borderRadius: const BorderRadius.vertical(top: Radius.circular(22)),
                           gradient: LinearGradient(
-                            colors: [Colors.transparent, AppColors.textDark.withOpacity(0.85)],
+                            colors: [Colors.transparent, AppColors.textDark.withValues(alpha: 0.85)],
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
                           ),
@@ -90,12 +91,12 @@ class ETicketScreen extends StatelessWidget {
                                       color: AppColors.accent,
                                       borderRadius: BorderRadius.circular(8),
                                     ),
-                                    child: const Row(
+                                    child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Icon(Icons.check_circle_rounded, color: AppColors.textDark, size: 14),
-                                        SizedBox(width: 4),
-                                        Text('TIKET AKTIF / LUNAS', style: TextStyle(color: AppColors.textDark, fontSize: 10, fontWeight: FontWeight.bold)),
+                                        const Icon(Icons.check_circle_rounded, color: AppColors.textDark, size: 14),
+                                        const SizedBox(width: 4),
+                                        Text(ticket.statusLabel, style: const TextStyle(color: AppColors.textDark, fontSize: 10, fontWeight: FontWeight.bold)),
                                       ],
                                     ),
                                   ),
@@ -199,7 +200,7 @@ class ETicketScreen extends StatelessWidget {
                           ),
                           child: Column(
                             children: [
-                              const Icon(Icons.qr_code_2_rounded, size: 140, color: AppColors.primary),
+                              const Icon(Icons.confirmation_number_outlined, size: 80, color: AppColors.primary),
                               const SizedBox(height: 6),
                               Text(
                                 ticket.ticketCode,
@@ -215,7 +216,7 @@ class ETicketScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 12),
                         const Text(
-                          'Tunjukkan QR Code ini kepada petugas lokasi wisata',
+                          'Tunjukkan kode pemesanan ini kepada petugas. Pembayaran dikonfirmasi di lokasi.',
                           style: TextStyle(color: AppColors.textMuted, fontSize: 12),
                           textAlign: TextAlign.center,
                         ),
@@ -243,16 +244,18 @@ class ETicketScreen extends StatelessWidget {
                         side: const BorderSide(color: AppColors.primary),
                       ),
                     ),
-                    onPressed: () {
+                    onPressed: () async {
+                      await Clipboard.setData(ClipboardData(text: ticket.ticketCode));
+                      if (!context.mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('E-Ticket berhasil disimpan ke galeri!'),
+                          content: Text('Kode pemesanan disalin.'),
                           backgroundColor: AppColors.primary,
                         ),
                       );
                     },
                     icon: const Icon(Icons.download_rounded, size: 20),
-                    label: const Text('Simpan Tiket', style: TextStyle(fontWeight: FontWeight.bold)),
+                    label: const Text('Salin Kode', style: TextStyle(fontWeight: FontWeight.bold)),
                   ),
                 ),
                 const SizedBox(width: 12),

@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'theme/app_colors.dart';
-import 'screens/main_layout.dart';
+import 'screens/login_screen.dart';
 
 class AppScrollBehavior extends MaterialScrollBehavior {
   @override
@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: AppColors.background,
         useMaterial3: true,
       ),
-      home: const MainLayout(),
+      home: const LoginScreen(),
     );
   }
 }

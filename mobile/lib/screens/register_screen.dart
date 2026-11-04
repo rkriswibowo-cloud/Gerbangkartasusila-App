@@ -41,6 +41,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _emailController.text.trim(),
       _passwordController.text,
     );
+    if (!mounted) return;
 
     setState(() {
       _isLoading = false;
@@ -114,7 +115,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   border: Border.all(color: AppColors.border),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.primary.withOpacity(0.08),
+                      color: AppColors.primary.withValues(alpha: 0.08),
                       blurRadius: 16,
                       offset: const Offset(0, 4),
                     ),
@@ -175,7 +176,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.primary.withOpacity(0.35),
+                      color: AppColors.primary.withValues(alpha: 0.35),
                       blurRadius: 20,
                       offset: const Offset(0, 8),
                     ),

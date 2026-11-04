@@ -56,7 +56,7 @@ class _MainLayoutState extends State<MainLayout> {
 
     if (confirm == true) {
       await ApiService().logout();
-      if (mounted) {
+      if (context.mounted) {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (_) => const LoginScreen()),
@@ -88,7 +88,7 @@ class _MainLayoutState extends State<MainLayout> {
                 Container(
                   padding: const EdgeInsets.all(3),
                   decoration: BoxDecoration(
-                    color: AppColors.accent.withOpacity(0.4),
+                    color: AppColors.accent.withValues(alpha: 0.4),
                     shape: BoxShape.circle,
                   ),
                   child: const CircleAvatar(
@@ -175,7 +175,7 @@ class _MainLayoutState extends State<MainLayout> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(0.06),
+            color: AppColors.primary.withValues(alpha: 0.06),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -185,7 +185,7 @@ class _MainLayoutState extends State<MainLayout> {
         leading: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.12),
+            color: color.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(icon, color: color, size: 22),
@@ -214,7 +214,7 @@ class _MainLayoutState extends State<MainLayout> {
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: AppColors.primary.withOpacity(0.35),
+              color: AppColors.primary.withValues(alpha: 0.35),
               blurRadius: 20,
               offset: const Offset(0, 6),
             ),

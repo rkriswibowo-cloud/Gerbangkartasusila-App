@@ -13,9 +13,9 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  String _userName = 'John Doe';
-  String _userEmail = 'johndoe@example.com';
-  String _userPhone = '081234567890';
+  String _userName = ApiService.currentUser?['name'] ?? '';
+  String _userEmail = ApiService.currentUser?['email'] ?? '';
+  String _userPhone = ApiService.currentUser?['phone'] ?? '';
 
   Future<void> _openEditProfile() async {
     final updatedData = await Navigator.push<Map<String, String>>(
@@ -29,7 +29,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
 
-    if (updatedData != null) {
+    if (mounted && updatedData != null) {
       setState(() {
         if (updatedData['name'] != null && updatedData['name']!.isNotEmpty) {
           _userName = updatedData['name']!;
@@ -106,7 +106,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.primary.withOpacity(0.35),
+                  color: AppColors.primary.withValues(alpha: 0.35),
                   blurRadius: 20,
                   offset: const Offset(0, 8),
                 ),
@@ -117,7 +117,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Container(
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
-                    color: AppColors.accent.withOpacity(0.4),
+                    color: AppColors.accent.withValues(alpha: 0.4),
                     shape: BoxShape.circle,
                   ),
                   child: const CircleAvatar(
@@ -141,9 +141,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     _buildStatItem('12', 'Disimpan'),
-                    Container(height: 24, width: 1, color: Colors.white.withOpacity(0.3)),
+                    Container(height: 24, width: 1, color: Colors.white.withValues(alpha: 0.3)),
                     _buildStatItem('5', 'Dikunjungi'),
-                    Container(height: 24, width: 1, color: Colors.white.withOpacity(0.3)),
+                    Container(height: 24, width: 1, color: Colors.white.withValues(alpha: 0.3)),
                     _buildStatItem('4.9', 'Rating User'),
                   ],
                 ),
@@ -232,7 +232,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: isDanger ? const Color(0xFFE74C3C).withOpacity(0.12) : AppColors.primary.withOpacity(0.12),
+          color: isDanger ? const Color(0xFFE74C3C).withValues(alpha: 0.12) : AppColors.primary.withValues(alpha: 0.12),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Icon(icon, color: isDanger ? const Color(0xFFE74C3C) : AppColors.primary, size: 20),

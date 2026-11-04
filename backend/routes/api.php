@@ -12,8 +12,8 @@ use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\FavoriteController;
 use App\Http\Controllers\Api\TicketController;
 
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:10,1');
+Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:5,1');
 
 Route::get('/destinations', [DestinationController::class, 'index']);
 Route::get('/destinations/featured', [DestinationController::class, 'featured']);
@@ -32,29 +32,27 @@ Route::get('/hotels/{id}', [HotelController::class, 'show']);
 Route::get('/culinary', [CulinaryController::class, 'index']);
 Route::get('/culinary/{id}', [CulinaryController::class, 'show']);
 
-Route::get('/tickets', [TicketController::class, 'index']);
-Route::post('/tickets', [TicketController::class, 'store']);
-Route::get('/tickets/{id}', [TicketController::class, 'show']);
-
 Route::get('/media/{path}', function ($path) {
-    $filePath = storage_path('app/public/' . $path);
-    if (!file_exists($filePath)) {
-        $filePath = public_path($path);
+    $filePath = false;
+    foreach ([storage_path('app/public'), public_path('images')] as $directory) {
+        $root = realpath($directory);
+        $candidate = $root ? realpath($root . DIRECTORY_SEPARATOR . $path) : false;
+        if ($candidate && is_file($candidate) && str_starts_with($candidate, $root . DIRECTORY_SEPARATOR)) {
+            $filePath = $candidate;
+            break;
+        }
     }
-    if (!file_exists($filePath)) {
-        return response()->json(['error' => 'File not found: ' . $path], 404);
-    }
-    $file = file_get_contents($filePath);
+    abort_unless($filePath, 404);
     $type = mime_content_type($filePath);
-    return response($file, 200)
-        ->header('Content-Type', $type)
-        ->header('Access-Control-Allow-Origin', '*')
-        ->header('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    abort_unless(in_array($type, ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/avif']), 404);
+    return response()->file($filePath, ['Content-Type' => $type, 'X-Content-Type-Options' => 'nosniff']);
 })->where('path', '.*');
 
-Route::post('/profile/update', [AuthController::class, 'updateProfile']);
-
 Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/profile/update', [AuthController::class, 'updateProfile']);
+    Route::get('/tickets', [TicketController::class, 'index']);
+    Route::post('/tickets', [TicketController::class, 'store']);
+    Route::get('/tickets/{id}', [TicketController::class, 'show']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/profile', [AuthController::class, 'profile']);
     

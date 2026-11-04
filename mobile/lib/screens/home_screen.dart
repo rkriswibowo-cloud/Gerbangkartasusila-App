@@ -41,11 +41,14 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _fetchData() async {
     try {
       final data = await _apiService.getDestinations();
+      if (!mounted) return;
       setState(() {
         _destinations = data.map((json) => Destination.fromJson(json)).toList();
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Gagal memuat data. Periksa koneksi lalu buka kembali halaman ini.')));
       setState(() => _isLoading = false);
     }
   }
@@ -138,18 +141,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: Colors.white.withOpacity(0.3)),
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
                       ),
                       child: const Icon(Icons.menu_rounded, color: Colors.white, size: 24),
                     ),
                   ),
                   const SizedBox(width: 12),
-                  Column(
+                  const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Row(
+                      Row(
                         children: [
                           Icon(Icons.location_on_rounded, color: AppColors.accent, size: 14),
                           SizedBox(width: 4),
@@ -159,7 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ],
                       ),
-                      const Text(
+                      Text(
                         'Jelajahi Wisata ✨',
                         style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
                       ),
@@ -172,9 +175,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white.withOpacity(0.3)),
+                    border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
                   ),
                   child: Stack(
                     children: [
@@ -209,7 +212,7 @@ class _HomeScreenState extends State<HomeScreen> {
               border: Border.all(color: AppColors.border),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withValues(alpha: 0.1),
                   blurRadius: 16,
                   offset: const Offset(0, 4),
                 ),
@@ -232,7 +235,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.12),
+                    color: AppColors.primary.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: const Icon(Icons.tune_rounded, color: AppColors.primary, size: 20),
@@ -297,7 +300,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     borderRadius: BorderRadius.circular(18),
                     boxShadow: [
                       BoxShadow(
-                        color: bg[0].withOpacity(0.3),
+                        color: bg[0].withValues(alpha: 0.3),
                         blurRadius: 12,
                         offset: const Offset(0, 4),
                       ),
@@ -374,7 +377,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     boxShadow: isSelected
                         ? [
                             BoxShadow(
-                              color: AppColors.primary.withOpacity(0.3),
+                              color: AppColors.primary.withValues(alpha: 0.3),
                               blurRadius: 10,
                               offset: const Offset(0, 4),
                             ),
@@ -520,7 +523,7 @@ class _HomeScreenState extends State<HomeScreen> {
             border: Border.all(color: AppColors.border),
             boxShadow: [
               BoxShadow(
-                color: AppColors.primary.withOpacity(0.12),
+                color: AppColors.primary.withValues(alpha: 0.12),
                 blurRadius: 16,
                 offset: const Offset(0, 6),
               ),
@@ -541,8 +544,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     gradient: LinearGradient(
                       colors: [
                         Colors.transparent,
-                        AppColors.textDark.withOpacity(0.3),
-                        AppColors.textDark.withOpacity(0.9),
+                        AppColors.textDark.withValues(alpha: 0.3),
+                        AppColors.textDark.withValues(alpha: 0.9),
                       ],
                       stops: const [0.3, 0.6, 1.0],
                       begin: Alignment.topCenter,
@@ -557,9 +560,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
-                      color: AppColors.textDark.withOpacity(0.8),
+                      color: AppColors.textDark.withValues(alpha: 0.8),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.white.withOpacity(0.2)),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
                     ),
                     child: Row(
                       children: [
@@ -652,9 +655,9 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: const [
+            children: [
               Text(
                 'Jelajahi Lebih Banyak',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textDark),
@@ -689,7 +692,7 @@ class _HomeScreenState extends State<HomeScreen> {
         border: Border.all(color: AppColors.border),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primary.withOpacity(0.08),
+            color: AppColors.primary.withValues(alpha: 0.08),
             blurRadius: 16,
             offset: const Offset(0, 4),
           ),
@@ -725,7 +728,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                             decoration: BoxDecoration(
-                              color: AppColors.primary.withOpacity(0.12),
+                              color: AppColors.primary.withValues(alpha: 0.12),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(

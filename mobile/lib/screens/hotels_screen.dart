@@ -26,11 +26,14 @@ class _HotelsScreenState extends State<HotelsScreen> {
   Future<void> _fetch() async {
     try {
       final data = await _apiService.getHotels();
+      if (!mounted) return;
       setState(() {
         _items = data.map((json) => Hotel.fromJson(json)).toList();
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Gagal memuat data. Periksa koneksi lalu buka kembali halaman ini.')));
       setState(() => _isLoading = false);
     }
   }
@@ -71,7 +74,7 @@ class _HotelsScreenState extends State<HotelsScreen> {
                         border: Border.all(color: AppColors.border),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.primary.withOpacity(0.08),
+                            color: AppColors.primary.withValues(alpha: 0.08),
                             blurRadius: 16,
                             offset: const Offset(0, 4),
                           ),
@@ -96,9 +99,9 @@ class _HotelsScreenState extends State<HotelsScreen> {
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                                     decoration: BoxDecoration(
-                                      color: AppColors.textDark.withOpacity(0.8),
+                                      color: AppColors.textDark.withValues(alpha: 0.8),
                                       borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(color: Colors.white.withOpacity(0.2)),
+                                      border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
                                     ),
                                     child: const Row(
                                       children: [

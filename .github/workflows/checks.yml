@@ -1,0 +1,41 @@
+name: Application checks
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: bcmath, curl, fileinfo, gd, intl, mbstring, pdo_sqlite, zip
+          coverage: none
+      - run: composer install --no-interaction --prefer-dist
+      - run: cp .env.example .env
+      - run: php artisan key:generate
+      - run: composer validate --strict
+      - run: composer audit --locked
+      - run: php artisan test
+  flutter:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.44.3'
+          cache: true
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
+      - run: flutter build web --release --dart-define=API_BASE_URL=https://api.example.com

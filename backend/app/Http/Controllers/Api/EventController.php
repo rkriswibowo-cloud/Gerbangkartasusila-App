@@ -16,7 +16,7 @@ class EventController extends Controller
 
     public function show($id)
     {
-        $event = Event::findOrFail($id);
+        $event = Event::where('status', 'published')->findOrFail($id);
         return response()->json(['status' => 'success', 'data' => $event]);
     }
 }

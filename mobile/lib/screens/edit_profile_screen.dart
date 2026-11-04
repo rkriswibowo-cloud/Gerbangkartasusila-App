@@ -9,9 +9,9 @@ class EditProfileScreen extends StatefulWidget {
 
   const EditProfileScreen({
     super.key,
-    this.currentName = 'John Doe',
-    this.currentEmail = 'johndoe@example.com',
-    this.currentPhone = '081234567890',
+    this.currentName = '',
+    this.currentEmail = '',
+    this.currentPhone = '',
   });
 
   @override
@@ -66,6 +66,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
 
     final response = await _apiService.updateProfile(payload);
+    if (!mounted) return;
 
     setState(() {
       _isLoading = false;
@@ -129,7 +130,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.primary.withOpacity(0.3),
+                            color: AppColors.primary.withValues(alpha: 0.3),
                             blurRadius: 20,
                             offset: const Offset(0, 6),
                           ),
@@ -250,7 +251,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.primary.withOpacity(0.35),
+                      color: AppColors.primary.withValues(alpha: 0.35),
                       blurRadius: 16,
                       offset: const Offset(0, 4),
                     ),

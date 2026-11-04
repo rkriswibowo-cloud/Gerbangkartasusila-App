@@ -17,7 +17,7 @@ class DestinationController extends Controller
 
     public function show($id)
     {
-        $destination = Destination::with('category', 'images', 'reviews.user')->where('slug', $id)->firstOrFail();
+        $destination = Destination::with('category', 'images', 'reviews.user:id,name')->where('status', 'published')->where('slug', $id)->firstOrFail();
         return response()->json(['status' => 'success', 'data' => $destination]);
     }
 

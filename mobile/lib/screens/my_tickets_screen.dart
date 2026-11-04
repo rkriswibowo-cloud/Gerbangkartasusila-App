@@ -51,7 +51,10 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> {
             return const Center(child: CircularProgressIndicator(color: AppColors.primary));
           }
 
-          if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
+          if (snapshot.hasError) {
+            return Center(child: TextButton(onPressed: _loadTickets, child: const Text('Gagal memuat tiket. Ketuk untuk mencoba lagi.')));
+          }
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return Center(
               child: Padding(
                 padding: const EdgeInsets.all(24.0),
@@ -103,7 +106,7 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> {
                   border: Border.all(color: AppColors.border),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.primary.withOpacity(0.08),
+                      color: AppColors.primary.withValues(alpha: 0.08),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
@@ -144,9 +147,9 @@ class _MyTicketsScreenState extends State<MyTicketsScreen> {
                                       color: AppColors.accent,
                                       borderRadius: BorderRadius.circular(6),
                                     ),
-                                    child: const Text(
-                                      'AKTIF / LUNAS',
-                                      style: TextStyle(color: AppColors.textDark, fontSize: 10, fontWeight: FontWeight.bold),
+                                    child: Text(
+                                      ticket.statusLabel,
+                                      style: const TextStyle(color: AppColors.textDark, fontSize: 10, fontWeight: FontWeight.bold),
                                     ),
                                   ),
                                   const SizedBox(height: 6),

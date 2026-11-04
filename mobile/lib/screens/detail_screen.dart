@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import '../services/api_service.dart';
@@ -29,6 +28,8 @@ class _DetailScreenState extends State<DetailScreen> {
 
   Future<void> _fetchDetail() async {
     final data = await _apiService.getDestinationDetail(widget.slug);
+    if (!mounted) return;
+    if (!mounted) return;
     if (data != null) {
       setState(() {
         _destination = Destination.fromJson(data);
@@ -65,7 +66,7 @@ class _DetailScreenState extends State<DetailScreen> {
           borderRadius: const BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24)),
           border: Border.all(color: AppColors.border),
           boxShadow: [
-            BoxShadow(color: AppColors.primary.withOpacity(0.1), blurRadius: 20, offset: const Offset(0, -5))
+            BoxShadow(color: AppColors.primary.withValues(alpha: 0.1), blurRadius: 20, offset: const Offset(0, -5))
           ],
         ),
         child: SafeArea(
@@ -97,7 +98,7 @@ class _DetailScreenState extends State<DetailScreen> {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.primary.withOpacity(0.35),
+                          color: AppColors.primary.withValues(alpha: 0.35),
                           blurRadius: 12,
                           offset: const Offset(0, 4),
                         ),
@@ -128,6 +129,22 @@ class _DetailScreenState extends State<DetailScreen> {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
+            actions: [
+              IconButton(
+                tooltip: 'Simpan favorit',
+                icon: const Icon(Icons.bookmark_add_outlined),
+                onPressed: () async {
+                  try {
+                    await _apiService.saveFavorite(dest.id);
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Destinasi disimpan ke favorit.')));
+                  } catch (_) {
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Gagal menyimpan favorit. Coba lagi.')));
+                  }
+                },
+              ),
+            ],
             expandedHeight: 360,
             pinned: true,
             backgroundColor: AppColors.primary,
@@ -147,7 +164,7 @@ class _DetailScreenState extends State<DetailScreen> {
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          Colors.black.withOpacity(0.4),
+                          Colors.black.withValues(alpha: 0.4),
                           Colors.transparent,
                           AppColors.background,
                         ],
@@ -214,8 +231,8 @@ class _DetailScreenState extends State<DetailScreen> {
                     ),
                     const SizedBox(height: 28),
                     if (dest.address != null) ...[
-                      Row(
-                        children: const [
+                      const Row(
+                        children: [
                           Icon(Icons.map_rounded, color: AppColors.primary, size: 22),
                           SizedBox(width: 8),
                           Text('Lokasi & Alamat', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textDark)),
@@ -231,7 +248,7 @@ class _DetailScreenState extends State<DetailScreen> {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(color: AppColors.border),
-                            boxShadow: [BoxShadow(color: AppColors.primary.withOpacity(0.1), blurRadius: 10)],
+                            boxShadow: [BoxShadow(color: AppColors.primary.withValues(alpha: 0.1), blurRadius: 10)],
                           ),
                           clipBehavior: Clip.antiAlias,
                           child: FlutterMap(
@@ -275,7 +292,7 @@ class _DetailScreenState extends State<DetailScreen> {
         Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.15),
+            color: color.withValues(alpha: 0.15),
             shape: BoxShape.circle,
           ),
           child: Icon(icon, color: color, size: 24),

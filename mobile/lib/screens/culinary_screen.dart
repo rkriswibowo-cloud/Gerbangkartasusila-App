@@ -26,11 +26,14 @@ class _CulinaryScreenState extends State<CulinaryScreen> {
   Future<void> _fetch() async {
     try {
       final data = await _apiService.getCulinary();
+      if (!mounted) return;
       setState(() {
         _items = data.map((json) => Culinary.fromJson(json)).toList();
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Gagal memuat data. Periksa koneksi lalu buka kembali halaman ini.')));
       setState(() => _isLoading = false);
     }
   }
@@ -71,7 +74,7 @@ class _CulinaryScreenState extends State<CulinaryScreen> {
                         border: Border.all(color: AppColors.border),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.primary.withOpacity(0.08),
+                            color: AppColors.primary.withValues(alpha: 0.08),
                             blurRadius: 16,
                             offset: const Offset(0, 4),
                           ),

@@ -16,6 +16,9 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        if (app()->environment('production')) {
+            throw new \RuntimeException('Demo seeding is disabled in production. Create an administrator with app:create-admin.');
+        }
         // 1. Categories
         $catAlam = DestinationCategory::create([
             'name' => 'Wisata Alam',
@@ -159,10 +162,10 @@ class DatabaseSeeder extends Seeder
 
         // 6. Users & Articles
         $userRony = User::firstOrCreate(
-            ['email' => 'rkriswibowo@gmail.com'],
+            ['email' => 'editor@example.test'],
             [
-                'name' => 'Rony Kriswibowo',
-                'password' => bcrypt('password'),
+                'name' => 'Demo Editor',
+                'password' => bcrypt(Str::random(48)),
                 'phone' => '081234567890',
                 'status' => 'active',
             ]
@@ -172,7 +175,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'admin@example.com'],
             [
                 'name' => 'Admin Gerbangkartasusila',
-                'password' => bcrypt('password'),
+                'password' => bcrypt(Str::random(48)),
             ]
         );
         

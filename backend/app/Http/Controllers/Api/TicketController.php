@@ -16,6 +16,7 @@ class TicketController extends Controller
     public function index(Request $request)
     {
         $tickets = Ticket::with('destination')
+            ->where('user_id', $request->user()->id)
             ->latest()
             ->get();
 
@@ -35,12 +36,12 @@ class TicketController extends Controller
             'visitor_name'   => 'required|string|max:255',
             'visitor_email'  => 'required|email|max:255',
             'visitor_phone'  => 'required|string|max:50',
-            'visit_date'     => 'required|date',
-            'quantity'       => 'required|integer|min:1',
-            'payment_method' => 'nullable|string',
+            'visit_date'     => 'required|date|after_or_equal:today',
+            'quantity'       => 'required|integer|min:1|max:100',
+            'payment_method' => 'nullable|in:Bayar di lokasi',
         ]);
 
-        $destination = Destination::findOrFail($request->destination_id);
+        $destination = Destination::where('status', 'published')->findOrFail($request->destination_id);
         $pricePerTicket = $destination->ticket_price ?? 0;
         $totalPrice = $pricePerTicket * $request->quantity;
 
@@ -48,7 +49,7 @@ class TicketController extends Controller
 
         $ticket = Ticket::create([
             'ticket_code'      => $ticketCode,
-            'user_id'          => auth('sanctum')->id(),
+            'user_id'          => $request->user()->id,
             'destination_id'   => $destination->id,
             'visitor_name'     => $request->visitor_name,
             'visitor_email'    => $request->visitor_email,
@@ -57,8 +58,8 @@ class TicketController extends Controller
             'quantity'         => $request->quantity,
             'price_per_ticket' => $pricePerTicket,
             'total_price'      => $totalPrice,
-            'payment_method'   => $request->payment_method ?? 'QRIS',
-            'status'           => 'paid',
+            'payment_method'   => 'Bayar di lokasi',
+            'status'           => 'pending',
         ]);
 
         $ticket->load('destination');
@@ -73,11 +74,11 @@ class TicketController extends Controller
     /**
      * Display the specified ticket.
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
         $ticket = Ticket::with('destination')
-            ->where('id', $id)
-            ->orWhere('ticket_code', $id)
+            ->where('user_id', $request->user()->id)
+            ->where(fn ($query) => $query->where('id', $id)->orWhere('ticket_code', $id))
             ->first();
 
         if (!$ticket) {

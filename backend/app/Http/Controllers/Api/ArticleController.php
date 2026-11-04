@@ -10,13 +10,13 @@ class ArticleController extends Controller
 {
     public function index()
     {
-        $articles = Article::with('author')->orderBy('published_at', 'desc')->paginate(10);
+        $articles = Article::with('author:id,name')->where('published_at', '<=', now())->orderBy('published_at', 'desc')->paginate(10);
         return response()->json(['status' => 'success', 'data' => $articles]);
     }
 
     public function show($id)
     {
-        $article = Article::with('author')->findOrFail($id);
+        $article = Article::with('author:id,name')->where('published_at', '<=', now())->findOrFail($id);
         return response()->json(['status' => 'success', 'data' => $article]);
     }
 }

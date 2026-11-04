@@ -16,8 +16,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final ApiService _apiService = ApiService();
 
-  final TextEditingController _emailController = TextEditingController(text: 'johndoe@example.com');
-  final TextEditingController _passwordController = TextEditingController(text: 'password123');
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   bool _isLoading = false;
   bool _obscurePassword = true;
@@ -40,6 +40,8 @@ class _LoginScreenState extends State<LoginScreen> {
       _emailController.text.trim(),
       _passwordController.text,
     );
+
+    if (!mounted) return;
 
     setState(() {
       _isLoading = false;
@@ -97,7 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.primary.withOpacity(0.35),
+                          color: AppColors.primary.withValues(alpha: 0.35),
                           blurRadius: 30,
                           offset: const Offset(0, 10),
                         ),
@@ -132,7 +134,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     border: Border.all(color: AppColors.border),
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.primary.withOpacity(0.08),
+                        color: AppColors.primary.withValues(alpha: 0.08),
                         blurRadius: 16,
                         offset: const Offset(0, 4),
                       ),
@@ -185,7 +187,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.primary.withOpacity(0.35),
+                        color: AppColors.primary.withValues(alpha: 0.35),
                         blurRadius: 20,
                         offset: const Offset(0, 8),
                       ),

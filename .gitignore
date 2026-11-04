@@ -27,3 +27,18 @@ mobile/.idea/
 *.log
 .DS_Store
 Thumbs.db
+
+# Secrets, local data, signing keys, and private backups
+**/.env.*
+!**/.env.example
+*.sql
+*.sql.gz
+*.sqlite
+*.sqlite3
+*.jks
+*.keystore
+**/key.properties
+**/local.properties
+backups/
+.local-tools/
+backend/.phpunit.result.cache
