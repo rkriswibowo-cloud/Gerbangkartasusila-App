@@ -42,3 +42,6 @@ Thumbs.db
 backups/
 .local-tools/
 backend/.phpunit.result.cache
+
+# Local web symlink
+web

@@ -68,7 +68,10 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
+        \Illuminate\Support\Facades\Log::info('Login attempt from ' . $request->ip() . ' for ' . $request->email);
+
         if (!$user || $user->status !== 'active' || !Hash::check($request->password, $user->password)) {
+            \Illuminate\Support\Facades\Log::warning('Login failed for: ' . $request->email . ' (user exists: ' . ($user ? 'yes' : 'no') . ')');
             return response()->json([
                 'status'  => 'error',
                 'message' => 'Email atau kata sandi tidak sesuai.'

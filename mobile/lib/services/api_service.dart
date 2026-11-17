@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 
@@ -7,14 +8,16 @@ class ApiService {
   static bool get isLoggedIn => _token != null;
 
   static String get host {
+    if (kIsWeb) {
+      final origin = Uri.base.origin;
+      if (origin.isNotEmpty && origin != 'null') {
+        return '$origin/Gerbangkartasusila-App/backend/public';
+      }
+    }
     const configured = String.fromEnvironment('API_BASE_URL');
     if (configured.isNotEmpty) return configured.replaceFirst(RegExp(r'/+$'), '');
-    if (kReleaseMode) {
-      throw StateError('API_BASE_URL wajib diisi saat build release.');
-    }
-    if (kIsWeb) return 'http://localhost:8000';
-    if (defaultTargetPlatform == TargetPlatform.android) return 'http://10.0.2.2:8000';
-    return 'http://127.0.0.1:8000';
+    if (defaultTargetPlatform == TargetPlatform.android) return 'http://10.0.2.2/Gerbangkartasusila-App/backend/public';
+    return 'http://localhost/Gerbangkartasusila-App/backend/public';
   }
 
   static String get baseUrl => '$host/api'; 
@@ -90,23 +93,43 @@ class ApiService {
 
   Future<List<dynamic>> getTickets() => _getList('/tickets');
 
+  static Map<String, dynamic>? _extractResponseData(dynamic raw) {
+    if (raw == null) return null;
+    if (raw is String) {
+      try {
+        final decoded = jsonDecode(raw);
+        if (decoded is Map) {
+          return Map<String, dynamic>.from(decoded);
+        }
+      } catch (_) {}
+    } else if (raw is Map) {
+      return Map<String, dynamic>.from(raw);
+    }
+    return null;
+  }
+
   Future<Map<String, dynamic>?> login(String email, String password) async {
     try {
       final response = await _dio.post('/login', data: {
         'email': email,
         'password': password,
       });
-      _saveSession(response.data);
-      return response.data;
+      final data = _extractResponseData(response.data) ?? {'status': 'success'};
+      _saveSession(data);
+      return data;
     } on DioException catch (e) {
-      if (e.response != null && e.response?.data != null) {
-        if (e.response?.data is Map<String, dynamic>) {
-          return e.response?.data as Map<String, dynamic>;
-        }
+      final errorData = _extractResponseData(e.response?.data);
+      if (errorData != null && errorData['message'] != null) {
+        return errorData;
       }
-      return {'status': 'error', 'message': 'Gagal terhubung ke server.'};
+      return {
+        'status': 'error',
+        'message': e.message != null && e.message!.isNotEmpty
+            ? 'Gagal terhubung ke server (${e.message})'
+            : 'Gagal terhubung ke server. Periksa koneksi dan coba lagi.'
+      };
     } catch (e) {
-      return {'status': 'error', 'message': 'Terjadi kesalahan sistem.'};
+      return {'status': 'error', 'message': 'Terjadi kesalahan sistem: $e'};
     }
   }
 
@@ -117,17 +140,22 @@ class ApiService {
         'email': email,
         'password': password,
       });
-      _saveSession(response.data);
-      return response.data;
+      final data = _extractResponseData(response.data) ?? {'status': 'success'};
+      _saveSession(data);
+      return data;
     } on DioException catch (e) {
-      if (e.response != null && e.response?.data != null) {
-        if (e.response?.data is Map<String, dynamic>) {
-          return e.response?.data as Map<String, dynamic>;
-        }
+      final errorData = _extractResponseData(e.response?.data);
+      if (errorData != null && errorData['message'] != null) {
+        return errorData;
       }
-      return {'status': 'error', 'message': 'Gagal terhubung ke server.'};
+      return {
+        'status': 'error',
+        'message': e.message != null && e.message!.isNotEmpty
+            ? 'Gagal terhubung ke server (${e.message})'
+            : 'Gagal terhubung ke server. Periksa koneksi dan coba lagi.'
+      };
     } catch (e) {
-      return {'status': 'error', 'message': 'Terjadi kesalahan sistem.'};
+      return {'status': 'error', 'message': 'Terjadi kesalahan sistem: $e'};
     }
   }
 
@@ -146,7 +174,9 @@ class ApiService {
   static void _saveSession(dynamic data) {
     if (data is Map && data['access_token'] is String) {
       _token = data['access_token'];
-      currentUser = Map<String, dynamic>.from(data['data']);
+      if (data['data'] is Map) {
+        currentUser = Map<String, dynamic>.from(data['data']);
+      }
     }
   }
 

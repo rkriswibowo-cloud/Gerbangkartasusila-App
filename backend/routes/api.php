@@ -11,6 +11,11 @@ use App\Http\Controllers\Api\ArticleController;
 use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\FavoriteController;
 use App\Http\Controllers\Api\TicketController;
+use Illuminate\Support\Facades\Log;
+
+Route::matched(function () {
+    Log::info('API ' . request()->method() . ' ' . request()->path() . ' from ' . request()->ip() . ' [Origin: ' . request()->header('origin') . ']');
+});
 
 Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:10,1');
 Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:5,1');
@@ -42,7 +47,14 @@ Route::get('/media/{path}', function ($path) {
             break;
         }
     }
-    abort_unless($filePath, 404);
+    if (! $filePath) {
+        $fallback = public_path('images/destinations/slg.png');
+        if (file_exists($fallback)) {
+            $filePath = $fallback;
+        } else {
+            abort(404);
+        }
+    }
     $type = mime_content_type($filePath);
     abort_unless(in_array($type, ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/avif']), 404);
     return response()->file($filePath, ['Content-Type' => $type, 'X-Content-Type-Options' => 'nosniff']);
